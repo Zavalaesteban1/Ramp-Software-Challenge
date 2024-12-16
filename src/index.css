@@ -206,3 +206,20 @@ hr.RampBreak--l {
   justify-content: flex-end;
   gap: 0.75rem;
 }
+
+
+
+
+/* Added this to the file */
+.RampButton {
+  transition: background-color 0.3s;
+}
+
+.RampButton:hover {
+  opacity: 0.9;
+}
+
+.RampButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
