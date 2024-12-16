@@ -26,6 +26,8 @@ export function usePaginatedTransactions(): PaginatedTransactionsResult {
       // 
       return {
         data: [...previousResponse.data, ...response.data],
+        // This will be null when there's no more data
+        // bug number 6
         nextPage: response.nextPage,
       }
     })
