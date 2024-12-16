@@ -1,5 +1,6 @@
+
 import Downshift from "downshift"
-import { useCallback, useState } from "react"
+import { useCallback, useState, useEffect } from "react" // Add useEffect
 import classNames from "classnames"
 import { DropdownPosition, GetDropdownPositionFn, InputSelectOnChange, InputSelectProps } from "./types"
 
@@ -17,6 +18,21 @@ export function InputSelect<TItem>({
     top: 0,
     left: 0,
   })
+
+  // Add ref to track the input element
+  const [inputElement, setInputElement] = useState<Element | null>(null)
+
+  // Update dropdown position when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (inputElement) {
+        setDropdownPosition(getDropdownPosition(inputElement))
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, true)
+    return () => window.removeEventListener('scroll', handleScroll, true)
+  }, [inputElement])
 
   const onChange = useCallback<InputSelectOnChange<TItem>>(
     (selectedItem) => {
@@ -59,6 +75,8 @@ export function InputSelect<TItem>({
             <div
               className="RampInputSelect--input"
               onClick={(event) => {
+                const target = event.target as Element;
+                setInputElement(target);
                 setDropdownPosition(getDropdownPosition(event.target))
                 toggleProps.onClick(event)
               }}
@@ -71,7 +89,11 @@ export function InputSelect<TItem>({
                 "RampInputSelect--dropdown-container-opened": isOpen,
               })}
               {...getMenuProps()}
-              style={{ top: dropdownPosition.top, left: dropdownPosition.left }}
+              style={{ 
+                position: 'fixed', // Change to fixed positioning
+                top: dropdownPosition.top,
+                left: dropdownPosition.left 
+              }}
             >
               {renderItems()}
             </div>
@@ -120,9 +142,8 @@ export function InputSelect<TItem>({
 const getDropdownPosition: GetDropdownPositionFn = (target) => {
   if (target instanceof Element) {
     const { top, left } = target.getBoundingClientRect()
-    const { scrollY } = window
     return {
-      top: scrollY + top + 63,
+      top: top + window.scrollY + 63, // Add window.scrollY to account for scroll position
       left,
     }
   }
