@@ -64,8 +64,17 @@ export function App() {
             if (newValue === null) {
               return
             }
+            // here is the change for Bug 3: Cannot select All Employees after selecting an employee
+            if (newValue.id === EMPTY_EMPLOYEE.id) {
+              // Handle "All Employees" selection
+              await loadAllTransactions()
+            }
+            else
+            {
+              // Handle specific employee selection
+              await loadTransactionsByEmployee(newValue.id)
+            }
 
-            await loadTransactionsByEmployee(newValue.id)
           }}
         />
 
